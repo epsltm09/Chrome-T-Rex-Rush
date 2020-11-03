@@ -23,9 +23,9 @@ screen = pygame.display.set_mode(scr_size)
 clock = pygame.time.Clock()
 pygame.display.set_caption("T-Rex Rush")
 
-jump_sound = pygame.mixer.Sound('sprites/jump.wav')
-die_sound = pygame.mixer.Sound('sprites/die.wav')
-checkPoint_sound = pygame.mixer.Sound('sprites/checkPoint.wav')
+# jump_sound = pygame.mixer.Sound('sprites/jump.wav')
+# die_sound = pygame.mixer.Sound('sprites/die.wav')
+# checkPoint_sound = pygame.mixer.Sound('sprites/checkPoint.wav')
 
 def load_image(
     name,
@@ -305,6 +305,10 @@ def introscreen():
     temp_ground,temp_ground_rect = load_sprite_sheet('ground.png',15,1,-1,-1,-1)
     temp_ground_rect.left = width/20
     temp_ground_rect.bottom = height
+    
+    solo_button, solo_button_rect = load_image('solo.png', 196, 30, -1)
+    solo_button_rect.left = width*0.6
+    solo_button_rect.bottom = height*0.5
 
     logo,logo_rect = load_image('logo.png',240,40,-1)
     logo_rect.centerx = width*0.6
@@ -322,6 +326,10 @@ def introscreen():
                         temp_dino.isJumping = True
                         temp_dino.isBlinking = False
                         temp_dino.movement[1] = -1*temp_dino.jumpSpeed
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    temp_dino.isJumping = True
+                    temp_dino.isBlinking = False
+                    temp_dino.movement[1] = -1*temp_dino.jumpSpeed
 
         temp_dino.update()
 
@@ -331,6 +339,7 @@ def introscreen():
             if temp_dino.isBlinking:
                 screen.blit(logo,logo_rect)
                 screen.blit(callout,callout_rect)
+                screen.blit(solo_button, solo_button_rect)
             temp_dino.draw()
 
             pygame.display.update()
@@ -402,6 +411,21 @@ def gameplay():
                     if event.type == pygame.KEYUP:
                         if event.key == pygame.K_DOWN:
                             playerDino.isDucking = False
+                            
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if pygame.mouse.get_pressed() == (1,0,0): # (mouse left button, wheel button, mouse right button)
+                            playerDino.isJumping = True  
+                            if pygame.mixer.get_init() != None:
+                                jump_sound.play()
+                            playerDino.movement[1] = -1*playerDino.jumpSpeed
+                            
+                        if pygame.mouse.get_pressed() == (0,0,1): # (mouse left button, wheel button, mouse right button)
+                            if not (playerDino.isJumping and playerDino.isDead):
+                                playerDino.isDucking = True
+                    
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        playerDino.isDucking = False
+                        
             for c in cacti:
                 c.movement[0] = -1*gamespeed
                 if pygame.sprite.collide_mask(playerDino,c):
@@ -489,7 +513,14 @@ def gameplay():
 
                         if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                             gameOver = False
+                            introscreen()
                             gameplay()
+                            
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        gameOver = False
+                        introscreen()
+                        gameplay()
+                            
             highsc.update(high_score)
             if pygame.display.get_surface() != None:
                 disp_gameOver_msg(retbutton_image,gameover_image)

@@ -46,3 +46,10 @@ Email: shivamshekhar299@gmail.com
 #### References:
 * http://www.pygame.org/docs
 * https://github.com/wayou/t-rex-runner
+
+
+### 추가사항
+* `solo.png` 파일의 추가로 버튼을 하나 띄워봤습니다.
+* 초기화면에서 마우스 클릭을 하면 게임을 시작하도록 했습니다.
+* 마우스 좌클릭은 점프, 마우스 우클릭은 Dunking 동작을 추가했습니다.
+* 게임 종료 시 아무 조작버튼을 누르면 다시 게임을 시작하는 것이 아니라 초기화면으로 돌아가도록 했습니다.
